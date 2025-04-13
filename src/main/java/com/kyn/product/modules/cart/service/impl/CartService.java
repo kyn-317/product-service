@@ -10,15 +10,15 @@ public interface CartService {
 
     Mono<Cart> createCart(CartRequest cartRequest);
 
-    Mono<Cart> getCart(String userId);
+    Mono<Cart> getCart(String email);
 
-    Mono<Cart> addCartItem(String userId, CartItem cartItem);
+    Mono<Cart> addCartItem(String email, CartItem cartItem);
 
-    Mono<Cart> updateCartItem(String userId, CartItem cartItem);
+    Mono<Cart> updateCartItem(String email, CartItem cartItem);
 
-    Mono<Cart> deleteCartItem(String userId, String productId);    
+    Mono<Cart> deleteCartItem(String email, String productId);    
 
-    Mono<Cart> clearCart(String userId);
+    Mono<Void> clearCart(String email);
     
     
 }

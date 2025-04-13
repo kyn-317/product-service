@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(staticName = "create")
 @Builder
 public class CartRequest {
-    private String userId;
+    private String email;
     private List<CartItemRequest> cartItems;
 }

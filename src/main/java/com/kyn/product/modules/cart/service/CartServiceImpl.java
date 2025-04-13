@@ -41,33 +41,66 @@ public class CartServiceImpl  implements CartService{
     }
 
     @Override
-    public Mono<Cart> getCart(String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCart'");
+    public Mono<Cart> getCart(String email) {
+        return cartRepository.findByEmail(email);
     }
 
     @Override
-    public Mono<Cart> addCartItem(String userId, CartItem cartItem) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addCartItem'");
+    public Mono<Cart> addCartItem(String email, CartItem cartItem) {
+        return cartRepository.findByEmail(email)
+        .map(cart -> addToCart(cart, cartItem))
+        .flatMap(cartRepository::save);
+    }
+
+    private Cart addToCart(Cart cart, CartItem cartItem){
+        cart.getCartItems().add(cartItem);
+        return cart;
     }
 
     @Override
-    public Mono<Cart> updateCartItem(String userId, CartItem cartItem) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateCartItem'");
+    public Mono<Cart> updateCartItem(String email, CartItem cartItem) {
+        return cartRepository.findByEmail(email)
+            .map(cart -> updateCartItem(cart, cartItem))
+            .flatMap(cartRepository::save);
+    }
+
+    private Cart updateCartItem(Cart cart, CartItem cartItem){
+        List<CartItem> updatedItems = cart.getCartItems().stream()
+        .map(item -> (item.getProductId().equals(cartItem.getProductId()))? 
+                cartItem : item)
+        .collect(Collectors.toList());
+        cart.setCartItems(updatedItems);
+        cart.setTotalPrice(totalPrice(updatedItems));
+        return cart;
+
     }
 
     @Override
-    public Mono<Cart> deleteCartItem(String userId, String productId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteCartItem'");
+    public Mono<Cart> deleteCartItem(String email, String productId) {
+        return cartRepository.findByEmail(email)
+        .map(cart -> deleteCartItem(cart, productId))
+        .flatMap(cartRepository::save);
+    }
+
+    private Cart deleteCartItem(Cart cart, String productId){
+        List<CartItem> updatedItems = cart.getCartItems().stream()
+        .filter(item -> !item.getProductId().equals(productId))
+        .collect(Collectors.toList());
+
+        cart.setCartItems(updatedItems);
+        cart.setTotalPrice(totalPrice(updatedItems));
+        return cart; 
     }
 
     @Override
-    public Mono<Cart> clearCart(String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clearCart'");
+    public Mono<Void> clearCart(String email) {
+        return cartRepository.deleteByEmail(email);
+    }
+
+    private int totalPrice(List<CartItem> cartItems){
+        return cartItems.stream()
+        .mapToInt(item -> Integer.parseInt(item.getProductPrice()) * item.getProductQuantity())
+        .sum();
     }
     
 }

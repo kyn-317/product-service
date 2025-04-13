@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 public class CartEntityDtoMapper {
     
-    public static Cart createCart (String userId, List<CartItemRequest> requestItems){
+    public static Cart createCart (String email, List<CartItemRequest> requestItems){
         var cartItems = requestItems.stream()
         .map(item -> CartItem.builder()
         .productId(item.getProductId())
@@ -24,7 +24,7 @@ public class CartEntityDtoMapper {
         .build())
         .collect(Collectors.toList());
         return Cart.builder()
-                .userId(userId)
+                .email(email)
                 .cartItems(cartItems)
                 .build();
     }
@@ -52,7 +52,7 @@ public class CartEntityDtoMapper {
         
         
         return Cart.builder()
-            .userId(cartRequest.getUserId())
+            .email(cartRequest.getEmail())
             .cartItems(cartItems)
             .totalPrice(cartItems.stream()
             .mapToInt(item -> Integer.parseInt(item.getProductPrice()) * item.getProductQuantity())

@@ -27,8 +27,8 @@ public class Cart extends BaseDocuments{
     @Id
     private ObjectId id;
 
-    @Field("USER_ID")
-    private String userId;
+    @Field("EMAIL")
+    private String email;
     @Field("CART_ITEMS")
     private List<CartItem> cartItems;
 
