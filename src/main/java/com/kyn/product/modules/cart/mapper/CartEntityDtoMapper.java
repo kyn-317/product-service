@@ -1,0 +1,67 @@
+package com.kyn.product.modules.cart.mapper;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.kyn.product.base.util.MongoDbUtil;
+import com.kyn.product.modules.cart.dto.CartItem;
+import com.kyn.product.modules.cart.dto.CartItemRequest;
+import com.kyn.product.modules.cart.dto.CartRequest;
+import com.kyn.product.modules.cart.entity.Cart;
+import com.kyn.product.modules.product.dto.ProductBasDto;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+public class CartEntityDtoMapper {
+    
+    public static Cart createCart (String userId, List<CartItemRequest> requestItems){
+        var cartItems = requestItems.stream()
+        .map(item -> CartItem.builder()
+        .productId(item.getProductId())
+        .productName(item.getProductName())
+        .productPrice(item.getProductPrice())
+        .productQuantity(item.getProductQuantity())
+        .build())
+        .collect(Collectors.toList());
+        return Cart.builder()
+                .userId(userId)
+                .cartItems(cartItems)
+                .build();
+    }
+
+    public static CartItem productToCartItem(ProductBasDto product, CartItemRequest request){
+        return CartItem.builder()
+        .productId(MongoDbUtil.toObjectId(product.get_id()))
+        .productName(product.getProductName())
+        .productPrice(product.getProductPrice())
+        .productQuantity(request.getProductQuantity())
+        .build();
+    }
+    public static Cart createCartFromProducts(List<ProductBasDto> products, CartRequest cartRequest) {
+        List<CartItem> cartItems = cartRequest.getCartItems()
+            .stream()
+            .map(itemRequest -> {
+                var product = products.stream()
+                    .filter(p -> p.get_id().equals(itemRequest.getProductId().toString()))
+                    .findFirst()
+                    .orElse(null);
+                
+                if (product != null) {
+                    return productToCartItem(product, itemRequest);
+                }
+                return null;
+            })
+            .filter(item -> item != null)
+            .collect(Collectors.toList());
+        
+        int totalPrice = cartItems.stream()
+            .mapToInt(item -> Integer.parseInt(item.getProductPrice()) * item.getProductQuantity())
+            .sum();
+        
+        return Cart.builder()
+            .userId(cartRequest.getUserId())
+            .cartItems(cartItems)
+            .totalPrice(totalPrice)
+            .build();
+    }
+}
