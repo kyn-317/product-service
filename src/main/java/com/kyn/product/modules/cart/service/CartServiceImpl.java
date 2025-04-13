@@ -3,12 +3,12 @@ package com.kyn.product.modules.cart.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import com.kyn.product.modules.cart.dto.CartItem;
 import com.kyn.product.modules.cart.dto.CartItemRequest;
 import com.kyn.product.modules.cart.dto.CartRequest;
+import com.kyn.product.modules.cart.dto.CartResponse;
 import com.kyn.product.modules.cart.entity.Cart;
 import com.kyn.product.modules.cart.mapper.CartEntityDtoMapper;
 import com.kyn.product.modules.cart.repository.CartRepository;
@@ -30,26 +30,29 @@ public class CartServiceImpl  implements CartService{
     }
 
     @Override
-    public Mono<Cart> createCart(CartRequest cartRequest) {                   
+    public Mono<CartResponse> createCart(CartRequest cartRequest) {                   
         return productService.getProductsByIds(
                 cartRequest.getCartItems().stream()
                     .map(CartItemRequest::getProductId)
                     .collect(Collectors.toList())).collectList()
                 .map(productsList -> CartEntityDtoMapper
                                     .createCartFromProducts(productsList, cartRequest))
-                                    .flatMap(cartRepository::save);
+                                    .flatMap(cartRepository::save)
+                                    .map(CartEntityDtoMapper::cartToCartResponse);
     }
 
     @Override
-    public Mono<Cart> getCart(String email) {
-        return cartRepository.findByEmail(email);
+    public Mono<CartResponse> getCart(String email) {
+        return cartRepository.findByEmail(email)
+        .map(CartEntityDtoMapper::cartToCartResponse);
     }
 
     @Override
-    public Mono<Cart> addCartItem(String email, CartItem cartItem) {
+    public Mono<CartResponse> addCartItem(String email, CartItem cartItem) {
         return cartRepository.findByEmail(email)
         .map(cart -> addToCart(cart, cartItem))
-        .flatMap(cartRepository::save);
+        .flatMap(cartRepository::save)
+        .map(CartEntityDtoMapper::cartToCartResponse);
     }
 
     private Cart addToCart(Cart cart, CartItem cartItem){
@@ -58,10 +61,11 @@ public class CartServiceImpl  implements CartService{
     }
 
     @Override
-    public Mono<Cart> updateCartItem(String email, CartItem cartItem) {
+    public Mono<CartResponse> updateCartItem(String email, CartItem cartItem) {
         return cartRepository.findByEmail(email)
             .map(cart -> updateCartItem(cart, cartItem))
-            .flatMap(cartRepository::save);
+            .flatMap(cartRepository::save)
+            .map(CartEntityDtoMapper::cartToCartResponse);
     }
 
     private Cart updateCartItem(Cart cart, CartItem cartItem){
@@ -76,10 +80,11 @@ public class CartServiceImpl  implements CartService{
     }
 
     @Override
-    public Mono<Cart> deleteCartItem(String email, String productId) {
+    public Mono<CartResponse> deleteCartItem(String email, String productId) {
         return cartRepository.findByEmail(email)
         .map(cart -> deleteCartItem(cart, productId))
-        .flatMap(cartRepository::save);
+        .flatMap(cartRepository::save)
+        .map(CartEntityDtoMapper::cartToCartResponse);
     }
 
     private Cart deleteCartItem(Cart cart, String productId){

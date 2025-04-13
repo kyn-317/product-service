@@ -7,6 +7,7 @@ import com.kyn.product.base.util.MongoDbUtil;
 import com.kyn.product.modules.cart.dto.CartItem;
 import com.kyn.product.modules.cart.dto.CartItemRequest;
 import com.kyn.product.modules.cart.dto.CartRequest;
+import com.kyn.product.modules.cart.dto.CartResponse;
 import com.kyn.product.modules.cart.entity.Cart;
 import com.kyn.product.modules.product.dto.ProductBasDto;
 import reactor.core.publisher.Flux;
@@ -58,5 +59,16 @@ public class CartEntityDtoMapper {
             .mapToInt(item -> Integer.parseInt(item.getProductPrice()) * item.getProductQuantity())
             .sum())
             .build();
+    }
+
+    public static CartResponse cartToCartResponse(Cart cart){
+        return CartResponse.builder()
+        ._id(cart.get_id())
+        .email(cart.getEmail())
+        .cartItems(cart.getCartItems())
+        .totalPrice(cart.getTotalPrice())
+        .build();
+
+        
     }
 }
