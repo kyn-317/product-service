@@ -13,10 +13,8 @@ import com.kyn.product.modules.cart.entity.Cart;
 import com.kyn.product.modules.cart.mapper.CartEntityDtoMapper;
 import com.kyn.product.modules.cart.repository.CartRepository;
 import com.kyn.product.modules.cart.service.impl.CartService;
-import com.kyn.product.modules.product.dto.ProductBasDto;
 import com.kyn.product.modules.product.service.interfaces.ProductService;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -38,7 +36,8 @@ public class CartServiceImpl  implements CartService{
                     .map(CartItemRequest::getProductId)
                     .collect(Collectors.toList())).collectList()
                 .map(productsList -> CartEntityDtoMapper
-                                    .createCartFromProducts(productsList, cartRequest));
+                                    .createCartFromProducts(productsList, cartRequest))
+                                    .flatMap(cartRepository::save);
     }
 
     @Override

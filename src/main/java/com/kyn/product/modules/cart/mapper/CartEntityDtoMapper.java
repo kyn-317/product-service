@@ -43,25 +43,20 @@ public class CartEntityDtoMapper {
             .map(itemRequest -> {
                 var product = products.stream()
                     .filter(p -> p.get_id().equals(itemRequest.getProductId().toString()))
-                    .findFirst()
-                    .orElse(null);
-                
-                if (product != null) {
-                    return productToCartItem(product, itemRequest);
-                }
+                    .findFirst().orElse(null);
+                if (product != null) return productToCartItem(product, itemRequest);
                 return null;
             })
             .filter(item -> item != null)
             .collect(Collectors.toList());
         
-        int totalPrice = cartItems.stream()
-            .mapToInt(item -> Integer.parseInt(item.getProductPrice()) * item.getProductQuantity())
-            .sum();
         
         return Cart.builder()
             .userId(cartRequest.getUserId())
             .cartItems(cartItems)
-            .totalPrice(totalPrice)
+            .totalPrice(cartItems.stream()
+            .mapToInt(item -> Integer.parseInt(item.getProductPrice()) * item.getProductQuantity())
+            .sum())
             .build();
     }
 }
