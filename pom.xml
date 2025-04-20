@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.kyn</groupId>
-	<artifactId>product</artifactId>
+	<artifactId>product-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>product</name>
-	<description>Demo project for Spring Boot</description>
+	<name>product-service</name>
+	<description>product service for kafka demo</description>
 	<url/>
 	<licenses>
 		<license/>

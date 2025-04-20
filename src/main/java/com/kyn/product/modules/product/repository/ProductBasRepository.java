@@ -15,5 +15,5 @@ import reactor.core.publisher.Flux;
 public interface ProductBasRepository extends ReactiveMongoRepository<ProductBasEntity, ObjectId> {
     Flux<ProductBasEntity> findAllBy(Pageable pageable);
 
-    Flux<ProductBasEntity> findAllByIdIn(List<ObjectId> ids);
+    Flux<ProductBasEntity> findAllBy_idIn(List<ObjectId> ids);
 }

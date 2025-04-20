@@ -55,7 +55,7 @@ public class ProductSearchServiceImpl implements ProductService {
 
     @Override
         public Flux<ProductBasDto> getProductsByIds(List<ObjectId> ids) {
-        return productBasRepository.findAllByIdIn(ids)
+        return productBasRepository.findAllBy_idIn(ids)
                 .map(ProductEntityDtoMapper::entityToDto);
     }
 }
