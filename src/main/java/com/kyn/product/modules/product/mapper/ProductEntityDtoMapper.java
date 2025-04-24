@@ -7,11 +7,11 @@ public class ProductEntityDtoMapper {
     public static ProductBasDto entityToDto(ProductBasEntity entity) {
         ProductBasDto dto = new ProductBasDto();
         BeanUtils.copyProperties(entity, dto);
-        dto.set_id(entity.get_id().toString());
-        dto.setRegrId(entity.getRegrId());
-        dto.setRegDt(entity.getRegDt());
-        dto.setAmdrId(entity.getAmdrId());
-        dto.setAmdDt(entity.getAmdDt());
+        dto.set_id(entity.get_id());
+        dto.setCreatedBy(entity.getCreatedBy());
+        dto.setCreatedDt(entity.getCreatedDt());
+        dto.setUpdatedBy(entity.getUpdatedBy());
+        dto.setUpdatedDt(entity.getUpdatedDt());
         return dto;
     }
 

@@ -2,12 +2,10 @@ package com.kyn.product.modules.product.dto;
 
 import java.time.LocalDateTime;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @Builder
@@ -25,16 +23,16 @@ public class ProductBasDto {
 
     private String productSpecification;
 
-    private String productPrice;
+    private int productPrice;
 
     private String productImage;
 
-    private LocalDateTime regDt;
+    private LocalDateTime createdDt;
 
-    private String regrId;
+    private String createdBy;
 
-    private LocalDateTime amdDt;
+    private LocalDateTime updatedDt;
 
-    private String amdrId;
+    private String updatedBy;
 
 }

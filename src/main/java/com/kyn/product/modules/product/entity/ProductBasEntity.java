@@ -1,6 +1,7 @@
 package com.kyn.product.modules.product.entity;
 
-import org.bson.types.ObjectId;
+import java.util.UUID;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -22,7 +23,7 @@ import lombok.ToString;
 public class ProductBasEntity extends BaseDocuments {
 
     @Id
-    private ObjectId _id;
+    private String _id;
 
     @Field("PRODUCT_NAME")
     private String productName;

@@ -1,16 +1,14 @@
 package com.kyn.product.modules.product.service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.bson.types.ObjectId;
 import org.redisson.api.RMapCacheReactive;
-
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.kyn.product.base.util.MongoDbUtil;
 import com.kyn.product.modules.product.dto.ProductBasDto;
 import com.kyn.product.modules.product.mapper.ProductEntityDtoMapper;
 import com.kyn.product.modules.product.repository.ProductBasRepository;
@@ -42,7 +40,7 @@ public class ProductSearchServiceImpl implements ProductService {
     public Mono<ProductBasDto> findById(String id) {
         return this.productBasMap.get(id)
                 .switchIfEmpty(
-                        productBasRepository.findById(MongoDbUtil.toObjectId(id))
+                        productBasRepository.findById(id)
                                 .map(ProductEntityDtoMapper::entityToDto)
                                 .flatMap(dto -> this.productBasMap.fastPut(id, dto, CACHE_TTL, TimeUnit.MINUTES)
                                         .thenReturn(dto)));
@@ -54,7 +52,7 @@ public class ProductSearchServiceImpl implements ProductService {
     }
 
     @Override
-        public Flux<ProductBasDto> getProductsByIds(List<ObjectId> ids) {
+    public Flux<ProductBasDto> getProductsByIds(List<String> ids) {
         return productBasRepository.findAllBy_idIn(ids)
                 .map(ProductEntityDtoMapper::entityToDto);
     }

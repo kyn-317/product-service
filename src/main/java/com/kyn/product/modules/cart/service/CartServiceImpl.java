@@ -31,14 +31,13 @@ public class CartServiceImpl  implements CartService{
 
     @Override
     public Mono<CartResponse> createCart(CartRequest cartRequest) {                   
-        return productService.getProductsByIds(
-                cartRequest.getCartItems().stream()
-                    .map(CartItemRequest::getProductId)
-                    .collect(Collectors.toList())).collectList()
+        return productService.getProductsByIds(cartRequest.getCartItems().stream()
+                .map(CartItemRequest::getProductId).collect(Collectors.toList()))
+                .collectList()
                 .map(productsList -> CartEntityDtoMapper
                                     .createCartFromProducts(productsList, cartRequest))
-                                    .flatMap(cartRepository::save)
-                                    .map(CartEntityDtoMapper::cartToCartResponse);
+                .flatMap(cartRepository::save)
+                .map(CartEntityDtoMapper::cartToCartResponse);
     }
 
     @Override
@@ -57,6 +56,7 @@ public class CartServiceImpl  implements CartService{
 
     private Cart addToCart(Cart cart, CartItem cartItem){
         cart.getCartItems().add(cartItem);
+        cart.setTotalPrice(totalPrice(cart.getCartItems()));
         return cart;
     }
 
@@ -104,7 +104,7 @@ public class CartServiceImpl  implements CartService{
 
     private int totalPrice(List<CartItem> cartItems){
         return cartItems.stream()
-        .mapToInt(item -> Integer.parseInt(item.getProductPrice()) * item.getProductQuantity())
+        .mapToInt(item -> item.getProductPrice() * item.getProductQuantity())
         .sum();
     }
     
