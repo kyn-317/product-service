@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class CartItemRequest {
     private String productId;
     private String productName;
-    private int productPrice;
+    private Double productPrice;
     private int productQuantity;
 }

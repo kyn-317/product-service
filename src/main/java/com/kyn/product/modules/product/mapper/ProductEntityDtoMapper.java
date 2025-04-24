@@ -9,9 +9,9 @@ public class ProductEntityDtoMapper {
         BeanUtils.copyProperties(entity, dto);
         dto.set_id(entity.get_id());
         dto.setCreatedBy(entity.getCreatedBy());
-        dto.setCreatedDt(entity.getCreatedDt());
+        dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedBy(entity.getUpdatedBy());
-        dto.setUpdatedDt(entity.getUpdatedDt());
+        dto.setUpdatedAt(entity.getUpdatedAt());
         return dto;
     }
 

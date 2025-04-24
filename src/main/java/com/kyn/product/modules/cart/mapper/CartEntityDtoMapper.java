@@ -1,6 +1,7 @@
 package com.kyn.product.modules.cart.mapper;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.kyn.product.modules.cart.dto.CartItem;
@@ -22,6 +23,7 @@ public class CartEntityDtoMapper {
         .build())
         .collect(Collectors.toList());
         return Cart.builder()
+                ._id(UUID.randomUUID().toString())
                 .email(email)
                 .cartItems(cartItems)
                 .build();
@@ -49,10 +51,11 @@ public class CartEntityDtoMapper {
             .collect(Collectors.toList());
         
         Cart cart=Cart.builder()
+        ._id(UUID.randomUUID().toString())
         .email(cartRequest.getEmail())
         .cartItems(cartItems)
         .totalPrice(cartItems.stream()
-        .mapToInt(item -> item.getProductPrice() * item.getProductQuantity())
+        .mapToDouble(item -> item.getProductPrice() * item.getProductQuantity())
         .sum())
         .build();
         cart.insertDocument(cartRequest.getEmail());

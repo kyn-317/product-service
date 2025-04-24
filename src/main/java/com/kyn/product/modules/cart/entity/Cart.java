@@ -32,7 +32,7 @@ public class Cart extends BaseDocuments{
     private List<CartItem> cartItems;
 
     @Field("TOTAL_PRICE")
-    private int totalPrice;
+    private Double totalPrice;
     
     
     

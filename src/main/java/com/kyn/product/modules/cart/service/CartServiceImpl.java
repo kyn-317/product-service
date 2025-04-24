@@ -1,5 +1,6 @@
 package com.kyn.product.modules.cart.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,8 +56,11 @@ public class CartServiceImpl  implements CartService{
     }
 
     private Cart addToCart(Cart cart, CartItem cartItem){
-        cart.getCartItems().add(cartItem);
-        cart.setTotalPrice(totalPrice(cart.getCartItems()));
+        var newCartItems = new ArrayList<CartItem>(cart.getCartItems());
+        newCartItems.add(cartItem);
+        cart.setCartItems(newCartItems);
+        cart.setTotalPrice(totalPrice(newCartItems));
+        cart.updateDocument(cart.getEmail());
         return cart;
     }
 
@@ -75,6 +79,8 @@ public class CartServiceImpl  implements CartService{
         .collect(Collectors.toList());
         cart.setCartItems(updatedItems);
         cart.setTotalPrice(totalPrice(updatedItems));
+        cart.updateDocument(cart.getEmail());
+        cart.insertDocument(cart.getEmail());
         return cart;
 
     }
@@ -94,6 +100,7 @@ public class CartServiceImpl  implements CartService{
 
         cart.setCartItems(updatedItems);
         cart.setTotalPrice(totalPrice(updatedItems));
+        cart.updateDocument(cart.getEmail());
         return cart; 
     }
 
@@ -102,9 +109,9 @@ public class CartServiceImpl  implements CartService{
         return cartRepository.deleteByEmail(email);
     }
 
-    private int totalPrice(List<CartItem> cartItems){
+    private Double totalPrice(List<CartItem> cartItems){
         return cartItems.stream()
-        .mapToInt(item -> item.getProductPrice() * item.getProductQuantity())
+        .mapToDouble(item -> item.getProductPrice() * item.getProductQuantity())
         .sum();
     }
     

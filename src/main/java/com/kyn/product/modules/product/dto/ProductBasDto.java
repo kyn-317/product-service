@@ -23,15 +23,15 @@ public class ProductBasDto {
 
     private String productSpecification;
 
-    private int productPrice;
+    private Double productPrice;
 
     private String productImage;
 
-    private LocalDateTime createdDt;
+    private LocalDateTime createdAt;
 
     private String createdBy;
 
-    private LocalDateTime updatedDt;
+    private LocalDateTime updatedAt;
 
     private String updatedBy;
 

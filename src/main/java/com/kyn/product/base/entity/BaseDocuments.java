@@ -2,10 +2,6 @@ package com.kyn.product.base.entity;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.AllArgsConstructor;
@@ -18,30 +14,26 @@ import lombok.NoArgsConstructor;
 public class BaseDocuments {
 
     @Field("CREATED_BY")
-    @CreatedBy
     private String createdBy;
 
-    @Field("CREATED_DT")
-    @CreatedDate
-    private LocalDateTime createdDt;
+    @Field("CREATED_AT")
+    private LocalDateTime createdAt;
 
     @Field("UPDATED_BY")
-    @LastModifiedBy
     private String updatedBy;
 
-    @Field("UPDATED_DT")
-    @LastModifiedDate
-    private LocalDateTime updatedDt;
+    @Field("UPDATED_AT")
+    private LocalDateTime updatedAt;
 
     public void insertDocument(String id) {
         this.createdBy = id;
-        this.createdDt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
         this.updatedBy = id;
-        this.updatedDt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void updateDocument(String id) {
         this.updatedBy = id;
-        this.updatedDt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }

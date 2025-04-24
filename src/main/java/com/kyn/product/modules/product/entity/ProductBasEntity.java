@@ -38,7 +38,7 @@ public class ProductBasEntity extends BaseDocuments {
     private String productSpecification;
 
     @Field("PRODUCT_PRICE")
-    private String productPrice;
+    private Double productPrice;
 
     @Field("PRODUCT_IMAGE")
     private String productImage;

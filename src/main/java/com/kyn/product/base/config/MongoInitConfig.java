@@ -137,13 +137,13 @@ public class MongoInitConfig {
         
         if (jsonNode.has("Selling Price")) {
             String price = String.valueOf(jsonNode.get("Selling Price").asDouble());
-            product.setProductPrice(price);
+            product.setProductPrice(Double.parseDouble(price));
         }
         
         if (jsonNode.has("Image")) {
             product.setProductImage(jsonNode.get("Image").asText());
         }
-        // Spring Data MongoDB의 Auditing 기능이 자동으로 createdBy, createdDt, updatedBy, updatedDt 필드를 설정함
+        product.insertDocument("system");        
         return product;
     }
 }
