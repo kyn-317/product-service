@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 public interface ProductService {
     Flux<ProductBasDto> findAll();
     Mono<ProductBasDto> findById(String id);
+    Mono<Long> countAll();
     Flux<ProductBasDto> findbyProductPaging(int page, int size);
     Flux<ProductBasDto> getProductsByIds(List<String> ids);
 }

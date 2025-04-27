@@ -47,8 +47,14 @@ public class ProductSearchServiceImpl implements ProductService {
     }
 
     @Override
+    public Mono<Long> countAll() {
+        return productBasRepository.countAll();
+    }
+
+    @Override
     public Flux<ProductBasDto> findbyProductPaging(int page, int size) {
-        return productBasRepository.findAllBy(PageRequest.of(page, size)).map(ProductEntityDtoMapper::entityToDto);
+        return productBasRepository.findAllBy(PageRequest.of(page, size))
+                .map(ProductEntityDtoMapper::entityToDto);
     }
 
     @Override

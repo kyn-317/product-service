@@ -5,6 +5,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.kyn.product.modules.product.dto.ProductBasDto;
+import com.kyn.product.modules.product.dto.ProductPageResponse;
+import com.kyn.product.modules.product.mapper.ResponseDtoMapper;
 import com.kyn.product.modules.product.service.interfaces.ProductService;
 
 import reactor.core.publisher.Mono;
@@ -29,6 +31,13 @@ public class ProductHandler {
     public Mono<ServerResponse> findbyProductPaging(ServerRequest request) {
         int page = Integer.parseInt(request.queryParam("page").orElse("0"));
         int size = Integer.parseInt(request.queryParam("size").orElse("10"));
-        return ServerResponse.ok().body(productService.findbyProductPaging(page, size), ProductBasDto.class);
+        
+        return Mono.zip(
+            productService.findbyProductPaging(page, size).collectList(),
+            productService.countAll()
+        ).map(tuple -> {
+            return  ResponseDtoMapper.toProductPageResponse(
+                tuple.getT1(), tuple.getT2(), size, page);
+        }).flatMap(response -> ServerResponse.ok().bodyValue(response));
     }
 }

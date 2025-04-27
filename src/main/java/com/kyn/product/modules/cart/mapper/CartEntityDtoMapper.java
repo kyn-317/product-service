@@ -69,7 +69,14 @@ public class CartEntityDtoMapper {
         .cartItems(cart.getCartItems())
         .totalPrice(cart.getTotalPrice())
         .build();
+    }
 
-        
+    public static CartItem cartItemRequestToCartItem(CartItemRequest request){
+        return CartItem.builder()
+        .productId(request.getProductId())
+        .productName(request.getProductName())
+        .productPrice(request.getProductPrice())
+        .productQuantity(request.getProductQuantity())
+        .build();
     }
 }
