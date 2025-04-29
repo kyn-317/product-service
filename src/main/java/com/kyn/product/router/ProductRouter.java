@@ -21,6 +21,7 @@ public class ProductRouter {
     public RouterFunction<ServerResponse> productRoutes() {
         return RouterFunctions.route(RequestPredicates.GET("/findAllProduct"), this.productHandler::findAll)
                 .andRoute(RequestPredicates.GET("/findProductById/{id}"), this.productHandler::findById)
+                .andRoute(RequestPredicates.POST("/findProductByIds"), this.productHandler::findByIds)
                 .andRoute(RequestPredicates.GET("/findProductPaging"), this.productHandler::findbyProductPaging);
 
     }
