@@ -4,8 +4,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import com.kyn.product.modules.cart.dto.CartItem;
-import com.kyn.product.modules.cart.dto.CartItemRequest;
 import com.kyn.product.modules.cart.dto.CartRequest;
 import com.kyn.product.modules.cart.mapper.CartEntityDtoMapper;
 import com.kyn.product.modules.cart.service.impl.CartService;
@@ -29,6 +27,13 @@ public class CartHandler {
         return request.bodyToMono(CartRequest.class)
         .map(CartRequest::getEmail)
         .flatMap(cartService::getCart)
+        .flatMap(cart -> ServerResponse.ok().bodyValue(cart));
+    }
+
+    public Mono<ServerResponse> getCartByEmail(ServerRequest request){
+
+        String email = request.pathVariable("email");
+        return cartService.getCart(email)
         .flatMap(cart -> ServerResponse.ok().bodyValue(cart));
     }
 

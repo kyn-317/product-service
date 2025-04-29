@@ -21,6 +21,7 @@ public class CartRouter {
     public RouterFunction<ServerResponse> cartRoutes() {
         return RouterFunctions.route(RequestPredicates.POST("/createCart"), this.cartHandler::createCart)
                 .andRoute(RequestPredicates.POST("/getCart"), this.cartHandler::getCart)
+                .andRoute(RequestPredicates.GET("/getCartByEmail/{email}"), this.cartHandler::getCartByEmail)
                 .andRoute(RequestPredicates.POST("/addCartItem"), this.cartHandler::addCartItem)
                 .andRoute(RequestPredicates.POST("/updateCartItem"), this.cartHandler::updateCartItem)
                 .andRoute(RequestPredicates.POST("/deleteCartItem"), this.cartHandler::deleteCartItem)
