@@ -18,6 +18,8 @@ public interface ProductBasRepository extends ReactiveMongoRepository<ProductBas
 
     Flux<ProductBasEntity> findAllBy_idIn(List<String> ids);
 
+    Mono<ProductBasEntity> findBy_id(String id);
+
     @Query(value = "{}", count = true)
     Mono<Long> countAll();
 }

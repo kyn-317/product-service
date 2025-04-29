@@ -14,9 +14,10 @@ import com.kyn.product.modules.product.mapper.ProductEntityDtoMapper;
 import com.kyn.product.modules.product.repository.ProductBasRepository;
 import com.kyn.product.modules.product.service.interfaces.ProductService;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
+@Slf4j
 @Service
 public class ProductSearchServiceImpl implements ProductService {
 
@@ -38,9 +39,10 @@ public class ProductSearchServiceImpl implements ProductService {
 
     @Override
     public Mono<ProductBasDto> findById(String id) {
+        log.info("findById: {}", id);
         return this.productBasMap.get(id)
                 .switchIfEmpty(
-                        productBasRepository.findById(id)
+                        productBasRepository.findBy_id(id)
                                 .map(ProductEntityDtoMapper::entityToDto)
                                 .flatMap(dto -> this.productBasMap.fastPut(id, dto, CACHE_TTL, TimeUnit.MINUTES)
                                         .thenReturn(dto)));
@@ -59,6 +61,7 @@ public class ProductSearchServiceImpl implements ProductService {
 
     @Override
     public Flux<ProductBasDto> getProductsByIds(List<String> ids) {
+        log.info("getProductsByIds: {}", ids);
         return productBasRepository.findAllBy_idIn(ids)
                 .map(ProductEntityDtoMapper::entityToDto);
     }
