@@ -1,7 +1,7 @@
 package com.kyn.product.base.config;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 
 import org.springframework.boot.CommandLineRunner;
@@ -77,23 +77,21 @@ public class MongoInitConfig {
         
         try {
             ClassPathResource resource = new ClassPathResource("product.jsonl");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+            Path filePath = Path.of(resource.getURI());
             
-            return Flux.using(
-                () -> reader,
-                r -> Flux.fromStream(r.lines()),
-                r -> {
-                    try {
-                        r.close();
-                    } catch (Exception e) {
-                        log.error("Failed to close reader", e);
-                    }
-                })
+            return Flux.fromStream(Files.lines(filePath))
                 .map(this::convertLineToProduct)
                 .filter(product -> product != null)
                 .flatMap(mongoTemplate::save)
                 .count()
-                .map(Long::intValue);
+                .map(Long::intValue)
+                .doFinally(signalType -> {
+                    try {
+                        Files.lines(filePath).close();
+                    } catch (Exception e) {
+                        log.error("Failed to close file stream", e);
+                    }
+                });
                 
         } catch (Exception e) {
             log.error("error: {}", e.getMessage());

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.kyn.product.base.exception.AlreadyCreatedCartException;
 import com.kyn.product.modules.cart.dto.CartItem;
 import com.kyn.product.modules.cart.dto.CartItemRequest;
 import com.kyn.product.modules.cart.dto.CartRequest;
@@ -32,13 +33,20 @@ public class CartServiceImpl  implements CartService{
 
     @Override
     public Mono<CartResponse> createCart(CartRequest cartRequest) {                   
-        return productService.getProductsByIds(cartRequest.getCartItems().stream()
-                .map(CartItemRequest::getProductId).collect(Collectors.toList()))
-                .collectList()
-                .map(productsList -> CartEntityDtoMapper
-                                    .createCartFromProducts(productsList, cartRequest))
-                .flatMap(cartRepository::save)
-                .map(CartEntityDtoMapper::cartToCartResponse);
+        return cartRepository.findByEmail(cartRequest.getEmail())
+            .hasElement()
+            .flatMap(exists -> {
+                if (Boolean.TRUE.equals(exists)) {
+                    return Mono.<CartResponse>error(new AlreadyCreatedCartException("cartAlreadyExists"));
+                }
+                return productService.getProductsByIds(cartRequest.getCartItems().stream()
+                    .map(CartItemRequest::getProductId).collect(Collectors.toList()))
+                    .collectList()
+                    .map(productsList -> CartEntityDtoMapper
+                        .createCartFromProducts(productsList, cartRequest))
+                    .flatMap(cartRepository::save)
+                    .map(CartEntityDtoMapper::cartToCartResponse);
+            });
     }
 
     @Override
@@ -55,9 +63,28 @@ public class CartServiceImpl  implements CartService{
         .map(CartEntityDtoMapper::cartToCartResponse);
     }
 
-    private Cart addToCart(Cart cart, CartItem cartItem){
+    private Cart addToCart(Cart cart, CartItem cartItem) {
         var newCartItems = new ArrayList<CartItem>(cart.getCartItems());
-        newCartItems.add(cartItem);
+        // Check if item with same productId exists
+        boolean itemExists = newCartItems.stream()
+            .anyMatch(item -> item.getProductId().equals(cartItem.getProductId()));
+            
+        if (itemExists) {
+            // Update quantity of existing item
+            newCartItems.clear();
+            newCartItems.addAll(cart.getCartItems().stream()
+                .map(item -> {
+                    if (item.getProductId().equals(cartItem.getProductId())) {
+                        // Update quantity by adding new quantity to existing quantity
+                        item.setProductQuantity(cartItem.getProductQuantity());
+                    }
+                    return item;
+                }).collect(Collectors.toList()));
+        } else {
+            // Add new item if it doesn't exist
+            newCartItems.add(cartItem);
+        }
+        
         cart.setCartItems(newCartItems);
         cart.setTotalPrice(totalPrice(newCartItems));
         cart.updateDocument(cart.getEmail());
